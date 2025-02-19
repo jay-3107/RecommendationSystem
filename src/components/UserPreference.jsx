@@ -58,7 +58,7 @@ const UserPreference = () => {
                 if (response.ok) {
                     setIsAlertOpen(true);
                     setTimeout(() => {
-                        navigate('/user/dashboard');
+                        navigate(`/user/dashboard?customerId=${customerId}`);
                     }, 2000); // Redirect after 2 seconds
                 } else {
                     console.error('Error saving preferences');
@@ -142,7 +142,7 @@ const UserPreference = () => {
                                 className="bg-blue-500 text-white hover:bg-blue-600" 
                                 onClick={() => {
                                     setIsAlertOpen(false);
-                                    navigate('/user/dashboard');
+                                    navigate(`/user/dashboard?customerId=${customerId}`);
                                 }}
                             >
                                 Okay

@@ -11,5 +11,34 @@
     "preferences": [
       "Beauty & Personal Care"
     ]
+  },
+  {
+    "customerId": "197cbbe2-b604-4e2f-bbda-5c2f75b7626e",
+    "preferences": [
+      "Software",
+      "Electronics",
+      "Health & Household",
+      "Beauty & Personal Care"
+    ]
+  },
+  {
+    "customerId": "87ff49bc-4ec5-417d-83a3-0f255422739f",
+    "preferences": [
+      "Health & Household",
+      "Electronics",
+      "Sports & Outdoors",
+      "Beauty & Personal Care"
+    ]
+  },
+  {
+    "customerId": "79aaff8c-bb3d-468c-a936-c5fad9f0e241",
+    "preferences": [
+      "Health & Household",
+      "Electronics",
+      "Software",
+      "Clothing & Fashion",
+      "Video Games",
+      "Sports & Outdoors"
+    ]
   }
 ]

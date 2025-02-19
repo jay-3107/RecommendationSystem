@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Search, User, Home } from "lucide-react"; // Icons
 import {
   Menubar,
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-// import logo from './../assets/logo.png'; // Make sure to import your logo image
-// import logo from './../../public/logo_icon1.png';
 import logo from './../assets/logo_icon1.png';
-
+import { SearchContext } from './SearchContext.jsx';
 
 const Header = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // Track if scrolled
-  const username = "Jayesh"; // Replace with dynamic username if needed
+  const [searchQuery, setSearchQuery] = useState('');
+  const [user, setUser] = useState(null); // State to store user data
+  const { setSearchResults } = useContext(SearchContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Extract customerId from URL
+  const queryParams = new URLSearchParams(location.search);
+  const customerId = queryParams.get('customerId');
 
   // Handle scroll event to add transparency effect
   useEffect(() => {
@@ -33,6 +39,45 @@ const Header = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/user/${customerId}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setUser(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    if (customerId) {
+      fetchUserData();
+    }
+  }, [customerId]);
+
+  const handleSearch = async (e) => {
+    setSearchQuery(e.target.value);
+    if (e.target.value.length > 2) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/search?query=${e.target.value}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setSearchResults(data);
+        navigate('/user/dashboard'); // Navigate to the dashboard
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
+    } else {
+      setSearchResults([]);
+    }
+  };
 
   return (
     <header
@@ -55,6 +100,8 @@ const Header = () => {
         <input
           type="text"
           placeholder="Search..."
+          value={searchQuery}
+          onChange={handleSearch}
           className={`absolute left-12 px-3 py-1 border border-gray-300 rounded-lg shadow-md transition-all duration-300 bg-white ${showSearch ? "w-48 opacity-100" : "w-0 opacity-0"
             }`}
         />
@@ -65,7 +112,7 @@ const Header = () => {
         <Menubar className="bg-gray-100 border border-gray-300 rounded-2xl shadow-lg px-6 py-3 w-fit hover:bg-gray-200 transition-all duration-300">
           <MenubarMenu>
             <MenubarTrigger asChild>
-              <Link to="/user/dashboard" className="flex items-center gap-2">
+              <Link to={`/user/dashboard?customerId=${customerId}`} className="flex items-center gap-2">
                 <Home className="w-5 h-5" /> <span>Dashboard</span>
               </Link>
             </MenubarTrigger>
@@ -78,13 +125,16 @@ const Header = () => {
         </Menubar>
       </div>
 
-
       {/* Right: Username & User Avatar */}
       <div className="flex items-center space-x-3">
-        <span className="text-gray-700 font-medium font-serif">{username}</span>
-        <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer">
-          <User className="w-6 h-6 text-gray-700" />
-        </div>
+        {user && (
+          <>
+            <span className="text-gray-700 font-medium font-serif">{user.username}</span>
+            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer">
+              <img src={`http://localhost:5000${user.profilePicture}`} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
+            </div>
+          </>
+        )}
       </div>
     </header>
   );

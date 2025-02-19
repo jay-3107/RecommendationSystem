@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ArrowUp } from "lucide-react";
 import Header from "./Header";
 import DashVdoSlider from "./DashVdoSlider";
 import Features from "./Features";
 import ProductCard from './ProductCard.jsx';
 import Footer from "./Footer";
+import { SearchContext } from './SearchContext.jsx';
+// import Header from './Header.jsx';
 
 const Dashboard = () => {
   const [showButton, setShowButton] = useState(false);
@@ -12,7 +14,7 @@ const Dashboard = () => {
   const [page, setPage] = useState(1); // Track current page
   const [hasMore, setHasMore] = useState(true); // Check if more products exist
   const [loading, setLoading] = useState(false);
-
+  const { searchResults } = useContext(SearchContext);
 
   // Fetch products from API
   const fetchProducts = async () => {
@@ -38,13 +40,6 @@ const Dashboard = () => {
     fetchProducts();
   }, []);
 
-
-  // Fetch initial products
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-
   useEffect(() => {
     const handleScroll = () => {
       if (
@@ -59,7 +54,6 @@ const Dashboard = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasMore, loading]);
-
 
   // Scroll event listener
   useEffect(() => {
@@ -76,6 +70,11 @@ const Dashboard = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Log search results to the console
+  useEffect(() => {
+    console.log("Search Results:", searchResults);
+  }, [searchResults]);
+
   return (
     <div className="bg-white">
       <Header />
@@ -85,17 +84,24 @@ const Dashboard = () => {
       <div className="container mx-auto p-6">
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-20 items-center justify-center">
-          {products.length > 0 ? (
-            products.map((product, index) => (
-              <div className="flex justify-center" key={product._id || `${product.id}-${index}`}>
+          {searchResults.length > 0 ? (
+            searchResults.map((product) => (
+              <div className="flex justify-center" key={product._id}>
                 <ProductCard product={product} />
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-500 col-span-4">No products available</p>
+            products.length > 0 ? (
+              products.map((product, index) => (
+                <div className="flex justify-center" key={product._id || `${product.id}-${index}`}>
+                  <ProductCard product={product} />
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 col-span-4">No products available</p>
+            )
           )}
         </div>
-
       </div>
 
       {/* Scroll to Top Button */}

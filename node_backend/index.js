@@ -3,7 +3,7 @@ const cors = require("cors");
 const fileUpload = require("express-fileupload");
 require("dotenv").config();
 const connectDB = require("./config/db");
-
+const path = require('path');
 // Connect to MongoDB
 connectDB();
 
@@ -12,6 +12,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 app.use(fileUpload());
+
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Routes
 app.use("/api", require("./routes/productRoutes"));
