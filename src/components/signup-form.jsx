@@ -44,19 +44,20 @@ export function SignUpForm({ className, ...props }) {
     for (const key in formData) {
       formDataToSend.append(key, formData[key]);
     }
-  
+
     try {
       const response = await fetch('http://localhost:5000/api/userauth', {
         method: 'POST',
         body: formDataToSend
       });
-  
+
       if (response.ok) {
-        // Handle successful response
+        const data = await response.json(); // Assuming the response contains JSON data
+        const customerId = data.uuid; // Extract the customer ID from the response
         console.log('User registered successfully');
-        navigate('/user/preference') ; // Navigate to UserPreference
-        
-      } else {
+        navigate(`/user/preference?customerId=${customerId}`); // Navigate to UserPreference with customer ID
+      }
+      else {
         // Handle error response
         console.error('Error registering user');
       }
