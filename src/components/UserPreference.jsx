@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const products = [
     { id: 1, name: "Beauty & Personal Care" },
@@ -30,6 +31,10 @@ const products = [
 const UserPreference = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const queryParams = new URLSearchParams(location.search);
+    const customerId = queryParams.get('customerId');
 
     const handleCardClick = (productId) => {
         setSelectedCategories((prevSelected) =>
@@ -39,9 +44,28 @@ const UserPreference = () => {
         );
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (selectedCategories.length > 0) {
-            setIsAlertOpen(true);
+            try {
+                const response = await fetch('http://localhost:5000/api/savePreferences', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ customerId, preferences: selectedCategories }),
+                });
+
+                if (response.ok) {
+                    setIsAlertOpen(true);
+                    setTimeout(() => {
+                        navigate('/user/dashboard');
+                    }, 2000); // Redirect after 2 seconds
+                } else {
+                    console.error('Error saving preferences');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
         } else {
             setIsAlertOpen(true);
         }
@@ -65,7 +89,6 @@ const UserPreference = () => {
                 transition={{ duration: 1 }}
             >
                 <h1 className="text-2xl font-bold font-serif">Select Your Shopping Category</h1>
-                {/* Select Your Shopping Category */}
             </motion.h1>
 
             <Card className="w-full bg-transparent shadow-none border-none">
@@ -79,9 +102,9 @@ const UserPreference = () => {
                             className="flex justify-center"
                         >
                             <Card
-                                onClick={() => handleCardClick(product.id)}
+                                onClick={() => handleCardClick(product.name)}
                                 className={`w-full max-w-xs p-4 rounded-xlg transition-all duration-300 cursor-pointer
-                                ${selectedCategories.includes(product.id) ? 'bg-blue-100 border-blue-500' : 'bg-blue-50'} 
+                                ${selectedCategories.includes(product.name) ? 'bg-blue-100 border-blue-500' : 'bg-blue-50'} 
                                 hover:scale-105 hover:shadow-xl`}
                             >
                                 <CardContent className="text-center">
@@ -117,7 +140,10 @@ const UserPreference = () => {
                         {selectedCategories.length > 0 && (
                             <AlertDialogAction 
                                 className="bg-blue-500 text-white hover:bg-blue-600" 
-                                onClick={() => setIsAlertOpen(false)}
+                                onClick={() => {
+                                    setIsAlertOpen(false);
+                                    navigate('/user/dashboard');
+                                }}
                             >
                                 Okay
                             </AlertDialogAction>
