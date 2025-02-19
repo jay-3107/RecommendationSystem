@@ -9,8 +9,13 @@ import login_img3 from './../assets/login_img3.jpg';
 import { Link } from 'react-router-dom'; // Import Link component
 import { useState } from "react"; // Import React useState for toggling the form
 import google_icon_signup from './../assets/signup_icon/google_icon_signup.png';
+import { useNavigate } from 'react-router-dom';
+
 
 export function SignUpForm({ className, ...props }) {
+
+
+  const navigate = useNavigate();
   // State to control the visibility of the sign-up form
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -39,16 +44,18 @@ export function SignUpForm({ className, ...props }) {
     for (const key in formData) {
       formDataToSend.append(key, formData[key]);
     }
-
+  
     try {
       const response = await fetch('http://localhost:5000/api/userauth', {
         method: 'POST',
         body: formDataToSend
       });
-
+  
       if (response.ok) {
         // Handle successful response
         console.log('User registered successfully');
+        navigate('/user/preference') ; // Navigate to UserPreference
+        
       } else {
         // Handle error response
         console.error('Error registering user');
