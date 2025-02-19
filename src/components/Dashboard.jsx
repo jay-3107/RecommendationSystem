@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ArrowUp } from "lucide-react"; 
-import Header from "./Header"; 
-import DashVdoSlider from "./DashVdoSlider"; 
-import Features from "./Features"; 
+import { ArrowUp } from "lucide-react";
+import Header from "./Header";
+import DashVdoSlider from "./DashVdoSlider";
+import Features from "./Features";
 import ProductCard from './ProductCard.jsx';
-import Footer from "./Footer"; 
+import Footer from "./Footer";
 
 const Dashboard = () => {
   const [showButton, setShowButton] = useState(false);
@@ -14,8 +14,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
 
 
-   // Fetch products from API
-   const fetchProducts = async () => {
+  // Fetch products from API
+  const fetchProducts = async () => {
     if (loading || !hasMore) return; // Avoid duplicate requests
     setLoading(true);
 
@@ -39,27 +39,27 @@ const Dashboard = () => {
   }, []);
 
 
-    // Fetch initial products
-    useEffect(() => {
-      fetchProducts();
-    }, []);
+  // Fetch initial products
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
 
-    useEffect(() => {
-      const handleScroll = () => {
-        if (
-          window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
-          hasMore &&
-          !loading
-        ) {
-          fetchProducts();
-        }
-      };
-  
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, [hasMore, loading]);
-  
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
+        hasMore &&
+        !loading
+      ) {
+        fetchProducts();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasMore, loading]);
+
 
   // Scroll event listener
   useEffect(() => {
@@ -86,8 +86,8 @@ const Dashboard = () => {
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-20 items-center justify-center">
           {products.length > 0 ? (
-            products.map((product) => (
-              <div className="flex justify-center" key={product.id}>
+            products.map((product, index) => (
+              <div className="flex justify-center" key={product._id || `${product.id}-${index}`}>
                 <ProductCard product={product} />
               </div>
             ))
@@ -95,6 +95,7 @@ const Dashboard = () => {
             <p className="text-center text-gray-500 col-span-4">No products available</p>
           )}
         </div>
+
       </div>
 
       {/* Scroll to Top Button */}
