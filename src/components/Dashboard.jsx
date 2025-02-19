@@ -6,7 +6,6 @@ import Features from "./Features";
 import ProductCard from './ProductCard.jsx';
 import Footer from "./Footer";
 import { SearchContext } from './SearchContext.jsx';
-// import Header from './Header.jsx';
 
 const Dashboard = () => {
   const [showButton, setShowButton] = useState(false);
@@ -70,11 +69,6 @@ const Dashboard = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Log search results to the console
-  useEffect(() => {
-    console.log("Search Results:", searchResults);
-  }, [searchResults]);
-
   return (
     <div className="bg-white">
       <Header />
@@ -87,14 +81,14 @@ const Dashboard = () => {
           {searchResults.length > 0 ? (
             searchResults.map((product) => (
               <div className="flex justify-center" key={product._id}>
-                <ProductCard product={product} />
+                <ProductCard product={product} recommendedProducts={[]} />
               </div>
             ))
           ) : (
             products.length > 0 ? (
               products.map((product, index) => (
                 <div className="flex justify-center" key={product._id || `${product.id}-${index}`}>
-                  <ProductCard product={product} />
+                  <ProductCard product={product} recommendedProducts={[]} />
                 </div>
               ))
             ) : (
