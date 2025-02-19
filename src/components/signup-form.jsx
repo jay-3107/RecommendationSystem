@@ -13,19 +13,57 @@ import google_icon_signup from './../assets/signup_icon/google_icon_signup.png';
 export function SignUpForm({ className, ...props }) {
   // State to control the visibility of the sign-up form
   const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    username: '',
+    email: '',
+    password: '',
+    file: null
+  });
 
   const handleContinueWithEmail = () => {
     setShowForm(true); // Show form when 'Continue with Email' is clicked
   };
 
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files ? files[0] : value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/userauth', {
+        method: 'POST',
+        body: formDataToSend
+      });
+
+      if (response.ok) {
+        // Handle successful response
+        console.log('User registered successfully');
+      } else {
+        // Handle error response
+        console.error('Error registering user');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
-    (<div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className={cn("flex flex-col gap-6", className)} {...props}>
         <Card className="overflow-hidden w-full md:w-[90%] ">
-
           <CardContent className="grid p-0 md:grid-cols-2">
-            <form className="p-6 md:p-8">
+            <form className="p-6 md:p-8" onSubmit={handleSubmit}>
               {/* Show the two buttons and the separator */}
               {!showForm ? (
                 <div className="flex flex-col gap-6">
@@ -37,22 +75,10 @@ export function SignUpForm({ className, ...props }) {
                   </div>
 
                   {/* Google Login Button */}
-                  {/* <Button variant="outline" className="w-full h-9 flex items-center justify-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5">
-                      <path
-                        d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-                        fill="currentColor"
-                      />
-                    </svg>
-
-                    <span>Login with Google</span>
-                  </Button> */}
-
                   <Button variant="outline" className="w-full h-9 flex items-center justify-center space-x-2">
                     <img src={google_icon_signup} alt="Google Icon" className="w-5 h-5" />
                     <span>Login with Google</span>
                   </Button>
-
 
                   {/* Separator */}
                   <div className="relative text-center text-sm">
@@ -82,17 +108,17 @@ export function SignUpForm({ className, ...props }) {
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <Label>Name</Label>
-                      <Input id="name" name="name" type="text" placeholder="" required />
+                      <Input id="name" name="name" type="text" placeholder="" required onChange={handleChange} />
                     </div>
                     <div>
                       <Label>Username</Label>
-                      <Input id="username" name="username" type="text" placeholder="" required />
+                      <Input id="username" name="username" type="text" placeholder="" required onChange={handleChange} />
                     </div>
                   </div>
 
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="m@example.com" required />
+                    <Input id="email" name="email" type="email" placeholder="m@example.com" required onChange={handleChange} />
                   </div>
                   <div className="grid gap-2">
                     <div className="flex items-center">
@@ -101,11 +127,11 @@ export function SignUpForm({ className, ...props }) {
                         Forgot your password?
                       </a>
                     </div>
-                    <Input id="password" type="password" required />
+                    <Input id="password" name="password" type="password" required onChange={handleChange} />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="file">Upload Profile Picture</Label>
-                    <Input id="file" type="file" accept="image/*" />
+                    <Input id="file" name="file" type="file" accept="image/*" onChange={handleChange} />
                   </div>
 
                   <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">
@@ -152,18 +178,10 @@ export function SignUpForm({ className, ...props }) {
                 </div>)}
             </form>
             <div className="relative hidden bg-muted md:block">
-              {/* <img
-              src={login_img2} ///
-              alt="Image"
-              className="absolute inset-0 h-full w-[700px] object-cover dark:brightness-[0.2] dark:grayscale" /> */}
               <img
-                src={login_img2} //
+                src={login_img2}
                 alt="Image"
                 className="absolute inset-0 h-full w-[700px] object-cover dark:brightness-[0.2] dark:grayscale" />
-              {/* <img
-              src={login_img3} //
-              alt="Image"
-              className="absolute inset-0 h-full w-[700px] object-cover dark:brightness-[0.2] dark:grayscale" /> */}
             </div>
           </CardContent>
         </Card>
@@ -172,6 +190,7 @@ export function SignUpForm({ className, ...props }) {
           By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
           and <a href="#">Privacy Policy</a>.
         </div>
-      </div></div>)
+      </div>
+    </div>
   );
 }
