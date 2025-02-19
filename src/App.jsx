@@ -13,9 +13,9 @@ function App() {
     <Router>
       <Routes>
         {/* Route for Login */}
-        <Route path="user/login" element={<LoginForm />} />
+        <Route path="/" element={<LoginForm />} />
         
-        {/* Route for Sign Up */}
+        Route for Sign Up
         <Route path="user/signup" element={<SignUpForm />} />
         <Route path="user/preference" element={<UserPreference />} />
         <Route path="user/pref" element={<Userpref />} />

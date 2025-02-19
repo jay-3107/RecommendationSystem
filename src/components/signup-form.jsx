@@ -145,15 +145,15 @@ export function SignUpForm({ className, ...props }) {
                   </div>
                   <div className="text-center text-sm">
                     Already have an account?
-                    <a href="#" className="underline underline-offset-4">
+                    <Link to="/" className="underline underline-offset-4">
                       Sign in
-                    </a>
+                    </Link>
                   </div>
                 </div>)}
             </form>
             <div className="relative hidden bg-muted md:block">
               {/* <img
-              src={login_img2} //
+              src={login_img2} ///
               alt="Image"
               className="absolute inset-0 h-full w-[700px] object-cover dark:brightness-[0.2] dark:grayscale" /> */}
               <img
