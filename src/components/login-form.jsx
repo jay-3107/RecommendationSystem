@@ -1,23 +1,50 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import login_img from './../assets/login_img.png';
 import login_img2 from './../assets/login_img2.svg';
 import login_img3 from './../assets/login_img3.jpg';
-import { Link } from 'react-router-dom'; // Import Link component
+import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
+import { useState } from 'react';
 
-export function LoginForm({
-  className,
-  ...props
-}) {
+export function LoginForm({ className, ...props }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:5000/api/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const customerId = data.uuid;
+        console.log('User signed in successfully');
+        navigate(`/user/dashboard?customerId=${customerId}`);
+      } else {
+        console.error('Error signing in user');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
-    (<div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className={cn("flex flex-col gap-6", className)} {...props}>
-        <Card className="overflow-hidden  w-full md:w-[700px]">
+        <Card className="overflow-hidden w-full md:w-[700px]">
           <CardContent className="grid p-0 md:grid-cols-2">
-            <form className="p-6 md:p-8">
+            <form className="p-6 md:p-8" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -27,7 +54,14 @@ export function LoginForm({
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="m@example.com" required />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -36,7 +70,13 @@ export function LoginForm({
                       Forgot your password?
                     </a>
                   </div>
-                  <Input id="password" type="password" required />
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </div>
                 <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">
                   Login
@@ -82,18 +122,10 @@ export function LoginForm({
               </div>
             </form>
             <div className="relative hidden bg-muted md:block">
-              {/* <img
-              src={login_img2} //
-              alt="Image"
-              className="absolute inset-0 h-full w-[700px] object-cover dark:brightness-[0.2] dark:grayscale" /> */}
               <img
-                src={login_img} //
+                src={login_img}
                 alt="Image"
                 className="absolute inset-0 h-full w-[700px] object-cover dark:brightness-[0.2] dark:grayscale" />
-              {/* <img
-              src={login_img3} //
-              alt="Image"
-              className="absolute inset-0 h-full w-[700px] object-cover dark:brightness-[0.2] dark:grayscale" /> */}
             </div>
           </CardContent>
         </Card>
@@ -102,6 +134,7 @@ export function LoginForm({
           By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
           and <a href="#">Privacy Policy</a>.
         </div>
-      </div></div>)
+      </div>
+    </div>
   );
 }
