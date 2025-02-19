@@ -9,21 +9,57 @@ import Footer from "./Footer";
 const Dashboard = () => {
   const [showButton, setShowButton] = useState(false);
   const [products, setProducts] = useState([]); // Store fetched products
+  const [page, setPage] = useState(1); // Track current page
+  const [hasMore, setHasMore] = useState(true); // Check if more products exist
+  const [loading, setLoading] = useState(false);
 
-  // Fetch products from the backend
+
+   // Fetch products from API
+   const fetchProducts = async () => {
+    if (loading || !hasMore) return; // Avoid duplicate requests
+    setLoading(true);
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/products?page=${page}&limit=30`);
+      const data = await response.json();
+
+      setProducts((prev) => [...prev, ...data.products]); // Append new products
+      setHasMore(data.hasMore); // Update "hasMore" state
+      setPage((prev) => prev + 1); // Increment page number
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+
+    setLoading(false);
+  };
+
+  // Fetch initial products
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/products");
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
     fetchProducts();
   }, []);
+
+
+    // Fetch initial products
+    useEffect(() => {
+      fetchProducts();
+    }, []);
+
+
+    useEffect(() => {
+      const handleScroll = () => {
+        if (
+          window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
+          hasMore &&
+          !loading
+        ) {
+          fetchProducts();
+        }
+      };
+  
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, [hasMore, loading]);
+  
 
   // Scroll event listener
   useEffect(() => {
@@ -48,7 +84,7 @@ const Dashboard = () => {
 
       <div className="container mx-auto p-6">
         {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 items-center justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-20 items-center justify-center">
           {products.length > 0 ? (
             products.map((product) => (
               <div className="flex justify-center" key={product.id}>
