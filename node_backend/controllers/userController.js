@@ -125,3 +125,65 @@ exports.getUserByCustomerId = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+exports.getUserProfile = async (req, res) => {
+  try {
+    const { customerId } = req.params; // Get customerId from URL parameters
+    const user = await UserModel.findOne({ uuid: customerId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+
+
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const { customerId } = req.params; // Get customerId from URL parameters
+    const { name, username, preferences, password } = req.body;
+
+    const user = await UserModel.findOne({ uuid: customerId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    if (username) {
+      user.username = username;
+    }
+
+    if (preferences) {
+      user.preferences = preferences;
+    }
+
+    if (password) {
+      user.password = password; // Ensure to hash the password before saving
+    }
+
+    if (req.files && req.files.profilePicture) {
+      const profilePicture = req.files.profilePicture;
+      const uploadPath = path.join(__dirname, '../public/uploads', profilePicture.name);
+      await profilePicture.mv(uploadPath);
+      user.profilePicture = `/uploads/${profilePicture.name}`;
+    }
+
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};

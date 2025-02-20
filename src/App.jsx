@@ -5,6 +5,8 @@ import { SignUpForm } from './components/signup-form.jsx'; // Import SignUpForm 
 import UserPreference from './components/UserPreference.jsx';
 import DashBoard from './components/Dashboard.jsx';
 import Header from './components/Header';
+import Profile from './components/UserProfile.jsx';
+
 // import { SearchProvider } from './SearchContext'; // Import SearchProvider
 import { SearchProvider }  from './components/SearchContext.jsx';
 function App() {
@@ -21,6 +23,8 @@ function App() {
           <Route path="user/preference" element={<UserPreference />} />
           {/* <Route path="user/pref" element={<Userpref />} /> */}
           <Route path="user/dashboard" element={<DashBoard />} />
+          <Route path="user/profile" element={<Profile />} />
+
         </Routes>
       </Router>
     </SearchProvider>

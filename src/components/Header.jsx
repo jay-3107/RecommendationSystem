@@ -117,7 +117,7 @@ const Header = () => {
               </Link>
             </MenubarTrigger>
             <MenubarTrigger asChild>
-              <Link to="#" className="flex items-center gap-2">
+              <Link to={`/user/profile?customerId=${customerId}`}className="flex items-center gap-2">
                 <User className="w-5 h-5" /> <span>Profile</span>
               </Link>
             </MenubarTrigger>
