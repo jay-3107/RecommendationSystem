@@ -18,6 +18,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 // Routes
 app.use("/api", require("./routes/productRoutes"));
 app.use("/api", require("./routes/userRoutes"));
+app.use("/api", require("./routes/chatbotRoutes")); // Add this line
 
 // Start Server
 const PORT = process.env.PORT || 5000;

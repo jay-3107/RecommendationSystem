@@ -49,34 +49,19 @@ exports.signInUser = async (req, res) => {
 exports.savePreferences = async (req, res) => {
   try {
     const { customerId, preferences } = req.body;
-    const filePath = path.join(__dirname, '../data/preferences.json');
 
-    // Read existing preferences from the file
-    let existingPreferences = [];
-    if (fs.existsSync(filePath)) {
-      const fileData = fs.readFileSync(filePath, 'utf8');
-      if (fileData) {
-        existingPreferences = JSON.parse(fileData);
-      }
+    // Find the user by customerId (uuid)
+    const user = await UserModel.findOne({ uuid: customerId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Ensure existingPreferences is an array
-    if (!Array.isArray(existingPreferences)) {
-      existingPreferences = [];
-    }
+    // Update the user's preferences
+    user.preferences = preferences;
 
-    // Check if the user already exists
-    const userIndex = existingPreferences.findIndex(pref => pref.customerId === customerId);
-    if (userIndex !== -1) {
-      // Update existing user's preferences
-      existingPreferences[userIndex].preferences = preferences;
-    } else {
-      // Append new preferences
-      existingPreferences.push({ customerId, preferences });
-    }
-
-    // Write updated preferences back to the file
-    fs.writeFileSync(filePath, JSON.stringify(existingPreferences, null, 2));
+    // Save the updated user document
+    await user.save();
 
     res.status(200).json({ message: "Preferences saved successfully" });
   } catch (error) {

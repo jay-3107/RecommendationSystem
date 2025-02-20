@@ -40,5 +40,15 @@
       "Video Games",
       "Sports & Outdoors"
     ]
+  },
+  {
+    "customerId": "2975f14d-68bf-4704-9243-f2f3bb4e6a7e",
+    "preferences": [
+      "Beauty & Personal Care",
+      "Sports & Outdoors",
+      "Electronics",
+      "Health & Household",
+      "Clothing & Fashion"
+    ]
   }
 ]

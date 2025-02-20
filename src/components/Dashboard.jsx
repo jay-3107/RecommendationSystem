@@ -17,9 +17,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-const API_KEY = 'AIzaSyCdH3aDzd12nL4N4_aagzm5wlyVphMTQWw';
-
-
 const Dashboard = () => {
   const [showButton, setShowButton] = useState(false);
   const [products, setProducts] = useState([]); // Store fetched products
@@ -93,21 +90,8 @@ const Dashboard = () => {
     setInputText("");
 
     try {
-      const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
-        {
-          contents: [{ role: 'user', parts: [{ text: `You are an information provider employee in this online e-commerce platform. Answer the question as per it: ${inputText}. Respond in React Markdown format and keep the response short.` }] }],
-          generationConfig: {
-            maxOutputTokens: 200 // Limits response length
-          }
-        },
-        {
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-
-      const chatbotData = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received.';
-      const botMessage = { role: 'bot', content: chatbotData };
+      const response = await axios.post('http://localhost:5000/api/chatbot', { inputText });
+      const botMessage = { role: 'bot', content: response.data.message };
       setChatMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error('Error fetching chatbot response:', error);
