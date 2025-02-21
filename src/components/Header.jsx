@@ -44,7 +44,7 @@ const Header = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/user/${customerId}`);
+        const response = await fetch(`https://recommendationsystem-backend.onrender.com/api/user/${customerId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -64,7 +64,7 @@ const Header = () => {
     setSearchQuery(e.target.value);
     if (e.target.value.length > 2) {
       try {
-        const response = await fetch(`http://localhost:5000/api/search?query=${e.target.value}`);
+        const response = await fetch(`https://recommendationsystem-backend.onrender.com/api/search?query=${e.target.value}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -131,7 +131,7 @@ const Header = () => {
           <>
             <span className="text-gray-700 font-medium font-serif">{user.username}</span>
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer">
-              <img src={`http://localhost:5000${user.profilePicture}`} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
+              <img src={`https://recommendationsystem-backend.onrender.com${user.profilePicture}`} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
             </div>
           </>
         )}

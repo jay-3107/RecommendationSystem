@@ -42,7 +42,7 @@ const UserProfile = () => {
     // Fetch user data from the backend
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/user/profile/${customerId}`);
+        const response = await axios.get(`https://recommendationsystem-backend.onrender.com/api/user/profile/${customerId}`);
         setUser(response.data);
         setName(response.data.name);
         setUsername(response.data.username);
@@ -71,7 +71,7 @@ const UserProfile = () => {
     }
 
     try {
-      const response = await axios.put(`http://localhost:5000/api/user/profile/${customerId}`, formData, {
+      const response = await axios.put(`https://recommendationsystem-backend.onrender.com/api/user/profile/${customerId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
@@ -95,7 +95,7 @@ const UserProfile = () => {
         <Card className="max-w-lg w-full mx-4  md:drop-shadow-xl">
           <CardHeader className="text-center">
             <div className="w-24 h-24 mx-auto rounded-full overflow-hidden">
-              <img src={`http://localhost:5000${profilePicture}`} alt="Profile" className="w-full h-full object-cover" />
+              <img src={`https://recommendationsystem-backend.onrender.com${profilePicture}`} alt="Profile" className="w-full h-full object-cover" />
             </div>
             <CardTitle className="mt-4">{user.name}</CardTitle>
             <CardDescription>{user.username}</CardDescription>
