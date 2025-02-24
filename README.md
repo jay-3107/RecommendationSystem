@@ -1,6 +1,7 @@
 # React + Vite
 
-we have changes the script in package.json of the backend (node_backend ) please note
+1. we have changes the script in package.json of the backend (node_backend ) please note
+2. note : to run the project on local machine , please clone the localhost branch
 
 for frontend to run :-
 
@@ -8,11 +9,8 @@ for frontend to run :-
 2. npm run dev
 
 
-note : before running frontend change the < https://recommendationsystem-backend.onrender.com > to  < http://localhost:5000 >
-for backend to run :-
-
 1. cd node_backend
-2. npm run dev 
+2. nodemon server.js or npm run dev
 (as we have changed the package.json )
 
 
