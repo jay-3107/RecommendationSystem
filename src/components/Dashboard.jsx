@@ -33,7 +33,7 @@ const Dashboard = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`https://recommendationsystem-backend.onrender.com/api/products?page=${page}&limit=30`);
+      const response = await fetch(`http://localhost:5000/api/products?page=${page}&limit=30`);
       const data = await response.json();
 
       setProducts((prev) => [...prev, ...data.products]); // Append new products
@@ -90,7 +90,7 @@ const Dashboard = () => {
     setInputText("");
 
     try {
-      const response = await axios.post('https://recommendationsystem-backend.onrender.com/api/chatbot', { inputText });
+      const response = await axios.post('http://localhost:5000/api/chatbot', { inputText });
       const botMessage = { role: 'bot', content: response.data.message };
       setChatMessages((prev) => [...prev, botMessage]);
     } catch (error) {
