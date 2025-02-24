@@ -8,9 +8,6 @@ for frontend to run :-
 2. npm run dev
 
 
-note : before running frontend change the < http://localhost:5000 > to  < https://recommendationsystem-backend.onrender.com >
-for backend to run :-
-
 1. cd node_backend
 2. npm run dev 
 (as we have changed the package.json )
