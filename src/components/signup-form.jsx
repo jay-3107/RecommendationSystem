@@ -46,7 +46,7 @@ export function SignUpForm({ className, ...props }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/userauth', {
+      const response = await fetch('https://recommendationsystem-backend.onrender.com/api/userauth', {
         method: 'POST',
         body: formDataToSend
       });

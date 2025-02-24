@@ -18,7 +18,7 @@ export function LoginForm({ className, ...props }) {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/signin', {
+      const response = await fetch('https://recommendationsystem-backend.onrender.com/api/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

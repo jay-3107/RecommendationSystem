@@ -47,7 +47,7 @@ const UserPreference = () => {
     const handleSubmit = async () => {
         if (selectedCategories.length > 0) {
             try {
-                const response = await fetch('http://localhost:5000/api/savePreferences', {
+                const response = await fetch('https://recommendationsystem-backend.onrender.com/api/savePreferences', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
