@@ -5,9 +5,10 @@ const handleChatbotRequest = async (req, res) => {
 
   try {
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${process.env.API_KEY}`,
+      // `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${process.env.API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.API_KEY}`,
       {
-        contents: [{ role: 'user', parts: [{ text: `You are an information provider employee in this online e-commerce platform. Answer the question as per it: ${inputText}. Respond in React Markdown format and keep the response short.` }] }],
+        contents: [{ role: 'user', parts: [{ text: `You are an information provider employee in this online e-commerce platform. Answer the question as per it: ${inputText}. keep the response short.` }] }],
         generationConfig: {
           maxOutputTokens: 200 // Limits response length
         }

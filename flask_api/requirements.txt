@@ -1,0 +1,7 @@
+flask
+langchain
+langchain-groq
+pydantic
+python-dotenv
+asyncio
+langchain-community

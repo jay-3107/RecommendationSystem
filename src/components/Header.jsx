@@ -14,35 +14,35 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false); // Track if scrolled
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState(null); // State to store user data
-  const { setSearchResults } = useContext(SearchContext);
+  const { setSearchResults, customerId, setCustomerId } = useContext(SearchContext);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract customerId from URL
-  const queryParams = new URLSearchParams(location.search);
-  const customerId = queryParams.get('customerId');
+  // Extract customerId from URL and store in context if not already set
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const urlCustomerId = queryParams.get('customerId');
+    
+    if (urlCustomerId && (!customerId || urlCustomerId !== customerId)) {
+      setCustomerId(urlCustomerId);
+    }
+  }, [location.search, customerId, setCustomerId]);
 
-  // Handle scroll event to add transparency effect
+  // Handle scroll event for transparency effect
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) { // Change 50 to adjust when the effect starts
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    // Clean up the event listener
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!customerId) return;
+      
       try {
         const response = await fetch(`http://localhost:5000/api/user/${customerId}`);
         if (!response.ok) {
@@ -55,9 +55,7 @@ const Header = () => {
       }
     };
 
-    if (customerId) {
-      fetchUserData();
-    }
+    fetchUserData();
   }, [customerId]);
 
   const handleSearch = async (e) => {
@@ -70,7 +68,13 @@ const Header = () => {
         }
         const data = await response.json();
         setSearchResults(data);
-        navigate('/user/dashboard'); // Navigate to the dashboard
+        
+        // Navigate to dashboard with customerId preserved
+        if (customerId) {
+          navigate(`/user/dashboard?customerId=${customerId}`);
+        } else {
+          navigate('/user/dashboard');
+        }
       } catch (error) {
         console.error("Error fetching search results:", error);
       }
@@ -81,16 +85,17 @@ const Header = () => {
 
   return (
     <header
-      className={`flex justify-between items-center mt-4 px-6 transition-all duration-300 ease-in-out ${isScrolled ? "bg-white bg-opacity-80 shadow-lg" : "bg-transparent"
-        } fixed w-full top-0 z-10 min-h-[60px]`}
+      className={`flex justify-between items-center mt-4 px-6 transition-all duration-300 ease-in-out ${
+        isScrolled ? "bg-white bg-opacity-80 shadow-lg" : "bg-transparent"
+      } fixed w-full top-0 z-10 min-h-[60px]`}
     >
       {/* Left: Logo */}
       <div className="flex items-center">
-        <img src={logo} alt="Logo" className="w-12 h-12 mr-6" /> {/* Adjust the margin here */}
+        <img src={logo} alt="Logo" className="w-12 h-12 mr-6" /> 
       </div>
 
       {/* Center: Search Bar */}
-      <div className="relative flex items-center ml-6"> {/* Add margin-left to separate it from the logo */}
+      <div className="relative flex items-center ml-6">
         <div
           className="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full cursor-pointer hover:bg-gray-300 transition-all"
           onClick={() => setShowSearch(!showSearch)}
@@ -102,8 +107,9 @@ const Header = () => {
           placeholder="Search..."
           value={searchQuery}
           onChange={handleSearch}
-          className={`absolute left-12 px-3 py-1 border border-gray-300 rounded-lg shadow-md transition-all duration-300 bg-white ${showSearch ? "w-48 opacity-100" : "w-0 opacity-0"
-            }`}
+          className={`absolute left-12 px-3 py-1 border border-gray-300 rounded-lg shadow-md transition-all duration-300 bg-white ${
+            showSearch ? "w-48 opacity-100" : "w-0 opacity-0"
+          }`}
         />
       </div>
 
@@ -112,12 +118,18 @@ const Header = () => {
         <Menubar className="bg-gray-100 border border-gray-300 rounded-2xl shadow-lg px-6 py-3 w-fit hover:bg-gray-200 transition-all duration-300">
           <MenubarMenu>
             <MenubarTrigger asChild>
-              <Link to={`/user/dashboard?customerId=${customerId}`} className="flex items-center gap-2">
+              <Link 
+                to={customerId ? `/user/dashboard?customerId=${customerId}` : '/user/dashboard'} 
+                className="flex items-center gap-2"
+              >
                 <Home className="w-5 h-5" /> <span>Dashboard</span>
               </Link>
             </MenubarTrigger>
             <MenubarTrigger asChild>
-              <Link to={`/user/profile?customerId=${customerId}`}className="flex items-center gap-2">
+              <Link 
+                to={customerId ? `/user/profile?customerId=${customerId}` : '/user/profile'} 
+                className="flex items-center gap-2"
+              >
                 <User className="w-5 h-5" /> <span>Profile</span>
               </Link>
             </MenubarTrigger>
@@ -131,7 +143,11 @@ const Header = () => {
           <>
             <span className="text-gray-700 font-medium font-serif">{user.username}</span>
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer">
-              <img src={`http://localhost:5000${user.profilePicture}`} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
+              <img 
+                src={`http://localhost:5000${user.profilePicture}`} 
+                alt="User Avatar" 
+                className="w-full h-full rounded-full object-cover" 
+              />
             </div>
           </>
         )}
